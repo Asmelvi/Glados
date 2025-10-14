@@ -1,0 +1,20 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Entornos
+.venv/
+env/
+venv/
+
+# Artefactos locales
+workspace/
+tmp_out.txt
+.cache_web/
+*.log
+
+# VSCode
+.vscode/
