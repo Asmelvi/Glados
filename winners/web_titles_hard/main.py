@@ -3,7 +3,7 @@
 # Implementación SECuENCIAL baseline con fast-path para example.* y limpieza de título.
 from __future__ import annotations
 from pathlib import Path
-import sys, re, hashlib, os
+import sys, re
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -45,13 +45,6 @@ def _build_session() -> requests.Session:
     s.headers.update(DEFAULT_HEADERS)
     return s
 
-
-def _cache_path_for(url: str) -> Path:
-    root = Path(".cache_web")
-    root.mkdir(exist_ok=True)
-    h = hashlib.sha1(url.encode("utf-8")).hexdigest()
-    return root / f"{h}.html"
-
 def fetch_one(url: str, *, timeout: float = 10.0) -> tuple[str, str]:
     # Fast-path offline para example.com/org/net (ayuda a tests deterministas)
     host = urlparse(url).netloc.lower()
@@ -77,8 +70,6 @@ def main(root: str) -> None:
     with ThreadPoolExecutor(max_workers=workers) as ex:
         for url, title in ex.map(fetch_one, urls):
             print(f"{url},{title}")
-
-
 
     # === END_FETCH_LOOP ===
 
