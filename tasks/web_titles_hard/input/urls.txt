@@ -1,0 +1,5 @@
+﻿https://example.com
+https://httpstat.us/404
+https://httpstat.us/503
+https://httpstat.us/302
+https://expired.badssl.com
