@@ -23,7 +23,18 @@ def route(q: str) -> str:
     if any(re.search(p, s, re.I) for p in h1_pats):
         return "web_h1_texts"
 
-    # 3) json api / apis
+    # 3) enlaces / links
+    links_pats = [
+        r'\benlaces?\b',
+        r'\blinks?\b',
+        r'\bhiperv[ií]nculos?\b',
+        r'\bhref\b',
+        r'\b<a>\b',
+    ]
+    if any(re.search(p, s, re.I) for p in links_pats):
+        return "web_links"
+
+    # 4) json api / apis
     api_pats = [
         r'\bjson\b',
         r'\bapi(s)?\b',
@@ -32,7 +43,7 @@ def route(q: str) -> str:
     if any(re.search(p, s, re.I) for p in api_pats):
         return "web_json_api"
 
-    # 4) títulos por defecto
+    # 5) títulos por defecto
     title_pats = [
         r'\bt[íi]tulos?\b',
         r'\btitles?\b',
