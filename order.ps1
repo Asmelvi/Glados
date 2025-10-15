@@ -20,6 +20,7 @@ switch ($skill) {
   'web_status_codes' { $entry='winners/web_status_codes/main.py'; $taskDir='tasks/web_status_codes/input' }
   'web_h1_texts'    { $entry='winners/web_h1_texts/main.py';    $taskDir='tasks/web_h1_texts/input' }
   'web_json_api'    { $entry='winners/web_json_api/main.py';    $taskDir='tasks/web_json_api/input' }
+  'web_links'      { $entry='winners/web_links/main.py'; $taskDir='tasks/web_links/input' }
   default           { $entry='winners/web_titles_hard/main.py'; $taskDir='tasks/web_titles_hard/input' }
 }
 
@@ -28,7 +29,7 @@ $ts = Get-Date -Format "yyyyMMdd_HHmmss"
 $workdir = "workspace/orders/$ts/$skill"
 New-Item -ItemType Directory -Force $workdir | Out-Null
 
-# 4) Extraer URLs del prompt y crear input efímero si aplica
+# 4) Extraer URLs del prompt y crear input efÃ­mero si aplica
 $needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts')
 if ($needsUrls) {
   $matches = [regex]::Matches($Prompt, '(https?://[^\s,;]+)') | ForEach-Object { $_.Groups[1].Value.TrimEnd('.,)') }
@@ -60,10 +61,20 @@ $stdoutPath = Join-Path $workdir 'logs\stdout.txt'
 $stderrPath = Join-Path $workdir 'logs\stderr.txt'
 if ($rc -eq 0) {
   Write-Host ("{0}" -f (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress))
-  Write-Host "`n--- RESULTADO ($skill) ---"
+  if ($skill -eq 'web_links') {
+  Write-Host "
+--- RESULTADO (web_links) ---"
+  Get-Content -Raw $stdoutPath | Write-Output
+  Write-Host "
+
+Logs:
+  stdout: $stdoutPath
+  stderr: $stderrPath"
+  return
+}Write-Host "`n--- RESULTADO ($skill) ---"
   Get-Content -Raw $stdoutPath
   Write-Host "`n`nLogs:`n  stdout: $(Resolve-Path $stdoutPath)`n  stderr: $(Resolve-Path $stderrPath)"
 } else {
   Write-Output (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress)
-  Write-Error "Ejecución retornó código $rc"
+  Write-Error "EjecuciÃ³n retornÃ³ cÃ³digo $rc"
 }
