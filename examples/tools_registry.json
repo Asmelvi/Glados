@@ -1,0 +1,12 @@
+{
+    "skills":  [
+                   {
+                       "id":  "web_titles_hard",
+                       "net":  true,
+                       "notes":  "Extrae títulos robustamente; maneja 404/503/302/SSL.",
+                       "task_dir":  "tasks/web_titles_hard/input",
+                       "expected":  "tasks/web_titles_hard/expected_stdout.txt",
+                       "entry":  "winners/web_titles_hard/main.py"
+                   }
+               ]
+}
