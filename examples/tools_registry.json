@@ -3,7 +3,7 @@
                    {
                        "id":  "web_titles_hard",
                        "net":  true,
-                       "notes":  "Extrae tÃ­tulos robustamente; maneja 404/503/302/SSL.",
+                       "notes":  "Extrae tÃƒÂ­tulos robustamente; maneja 404/503/302/SSL.",
                        "task_dir":  "tasks/web_titles_hard/input",
                        "expected":  "tasks/web_titles_hard/expected_stdout.txt",
                        "entry":  "winners/web_titles_hard/main.py"
@@ -14,7 +14,15 @@
                        "task_dir":  "tasks/web_status_codes/input",
                        "expected":  "tasks/web_status_codes/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Devuelve el código HTTP (sin seguir redirecciones)."
+                       "notes":  "Devuelve el cÃ³digo HTTP (sin seguir redirecciones)."
+                   },
+                   {
+                       "id":  "web_h1_texts",
+                       "entry":  "winners/web_h1_texts/main.py",
+                       "task_dir":  "tasks/web_h1_texts/input",
+                       "expected":  "tasks/web_h1_texts/expected_stdout.txt",
+                       "net":  true,
+                       "notes":  "Extrae el primer \u003ch1\u003e de cada URL."
                    }
                ]
 }
