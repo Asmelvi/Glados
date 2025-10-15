@@ -1,9 +1,9 @@
-{
+﻿{
     "skills":  [
                    {
                        "id":  "web_titles_hard",
                        "net":  true,
-                       "notes":  "Extrae tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulos robustamente; maneja 404/503/302/SSL.",
+                       "notes":  "Extrae tÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­tulos robustamente; maneja 404/503/302/SSL.",
                        "task_dir":  "tasks/web_titles_hard/input",
                        "expected":  "tasks/web_titles_hard/expected_stdout.txt",
                        "entry":  "winners/web_titles_hard/main.py"
@@ -14,7 +14,7 @@
                        "task_dir":  "tasks/web_status_codes/input",
                        "expected":  "tasks/web_status_codes/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Devuelve el cÃƒÆ’Ã‚Â³digo HTTP (sin seguir redirecciones)."
+                       "notes":  "Devuelve el cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo HTTP (sin seguir redirecciones)."
                    },
                    {
                        "id":  "web_h1_texts",
@@ -30,7 +30,7 @@
                        "task_dir":  "tasks/web_json_api/input",
                        "expected":  "tasks/web_json_api/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Lee endpoints JSON y extrae un tÃ­tulo (title o slideshow.title)."
+                       "notes":  "Lee endpoints JSON y extrae un tÃƒÂ­tulo (title o slideshow.title)."
                    },
                    {
                        "id":  "web_links",
@@ -38,7 +38,15 @@
                        "task_dir":  "tasks/web_links/input",
                        "expected":  "tasks/web_links/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Extrae enlaces (texto y href) de páginas."
+                       "notes":  "Extrae enlaces (texto y href) de pÃ¡ginas."
+                   },
+                   {
+                       "id":  "web_meta",
+                       "entry":  "winners/web_meta/main.py",
+                       "task_dir":  "tasks/web_meta/input",
+                       "expected":  "",
+                       "net":  true,
+                       "notes":  "Extrae meta/og/twitter y favicon de páginas."
                    }
                ]
 }

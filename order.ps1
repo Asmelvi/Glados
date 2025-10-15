@@ -20,6 +20,7 @@ switch ($skill) {
   'web_status_codes' { $entry='winners/web_status_codes/main.py'; $taskDir='tasks/web_status_codes/input' }
   'web_h1_texts'    { $entry='winners/web_h1_texts/main.py';    $taskDir='tasks/web_h1_texts/input' }
   'web_json_api'    { $entry='winners/web_json_api/main.py';    $taskDir='tasks/web_json_api/input' }
+  'web_meta'        { \C:\Users\Avalon\Desktop\vscode\Glados\winners\web_titles_hard\main.py='winners/web_meta/main.py';       \C:\Users\Avalon\Desktop\vscode\Glados\tasks\web_titles_hard\input='tasks/web_meta/input' }
   'web_links'      { $entry='winners/web_links/main.py'; $taskDir='tasks/web_links/input' }
   default           { $entry='winners/web_titles_hard/main.py'; $taskDir='tasks/web_titles_hard/input' }
 }
@@ -30,7 +31,7 @@ $workdir = "workspace/orders/$ts/$skill"
 New-Item -ItemType Directory -Force $workdir | Out-Null
 
 # 4) Extraer URLs del prompt y crear input efÃƒÂ­mero si aplica
-$needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts')
+$needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts','web_meta','web_links')
 if ($needsUrls) {
   $matches = [regex]::Matches($Prompt, '(https?://[^\s,;]+)') | ForEach-Object { $_.Groups[1].Value.TrimEnd('.,)') }
   $urls = @($matches | Where-Object { $_ } | Select-Object -Unique)
