@@ -29,7 +29,7 @@ $ts = Get-Date -Format "yyyyMMdd_HHmmss"
 $workdir = "workspace/orders/$ts/$skill"
 New-Item -ItemType Directory -Force $workdir | Out-Null
 
-# 4) Extraer URLs del prompt y crear input efÃ­mero si aplica
+# 4) Extraer URLs del prompt y crear input efÃƒÂ­mero si aplica
 $needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts')
 if ($needsUrls) {
   $matches = [regex]::Matches($Prompt, '(https?://[^\s,;]+)') | ForEach-Object { $_.Groups[1].Value.TrimEnd('.,)') }
@@ -76,5 +76,5 @@ Logs:
   Write-Host "`n`nLogs:`n  stdout: $(Resolve-Path $stdoutPath)`n  stderr: $(Resolve-Path $stderrPath)"
 } else {
   Write-Output (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress)
-  Write-Error "EjecuciÃ³n retornÃ³ cÃ³digo $rc"
+  Write-Error "EjecuciÃƒÂ³n retornÃƒÂ³ cÃƒÂ³digo $rc"
 }
