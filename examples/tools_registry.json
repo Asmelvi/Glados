@@ -3,7 +3,7 @@
                    {
                        "id":  "web_titles_hard",
                        "net":  true,
-                       "notes":  "Extrae tÃƒÂ­tulos robustamente; maneja 404/503/302/SSL.",
+                       "notes":  "Extrae tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulos robustamente; maneja 404/503/302/SSL.",
                        "task_dir":  "tasks/web_titles_hard/input",
                        "expected":  "tasks/web_titles_hard/expected_stdout.txt",
                        "entry":  "winners/web_titles_hard/main.py"
@@ -14,7 +14,7 @@
                        "task_dir":  "tasks/web_status_codes/input",
                        "expected":  "tasks/web_status_codes/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Devuelve el cÃ³digo HTTP (sin seguir redirecciones)."
+                       "notes":  "Devuelve el cÃƒÆ’Ã‚Â³digo HTTP (sin seguir redirecciones)."
                    },
                    {
                        "id":  "web_h1_texts",
@@ -23,6 +23,22 @@
                        "expected":  "tasks/web_h1_texts/expected_stdout.txt",
                        "net":  true,
                        "notes":  "Extrae el primer \u003ch1\u003e de cada URL."
+                   },
+                   {
+                       "id":  "web_json_api",
+                       "entry":  "winners/web_json_api/main.py",
+                       "task_dir":  "tasks/web_json_api/input",
+                       "expected":  "tasks/web_json_api/expected_stdout.txt",
+                       "net":  true,
+                       "notes":  "Lee endpoints JSON y extrae un tÃ­tulo (title o slideshow.title)."
+                   },
+                   {
+                       "id":  "web_links",
+                       "entry":  "winners/web_links/main.py",
+                       "task_dir":  "tasks/web_links/input",
+                       "expected":  "tasks/web_links/expected_stdout.txt",
+                       "net":  true,
+                       "notes":  "Extrae enlaces (texto y href) de páginas."
                    }
                ]
 }
