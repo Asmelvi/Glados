@@ -123,3 +123,19 @@ try {
     Write-Host "(warn) workdir/stdoutPath no definidos cuando se intentó guardar results.csv"
   }
 } catch { Write-Warning $_ }
+# 7c) Add CSV header if missing (idempotente)
+try {
+  if ($resultsPath -and (Test-Path $resultsPath)) {
+    $header = 'url,texto'
+    $first  = Get-Content -LiteralPath $resultsPath -TotalCount 1
+    if ($first -ne $header) {
+      $tmp = "$resultsPath.tmp"
+      $header | Out-File -LiteralPath $tmp -Encoding utf8
+      Get-Content -LiteralPath $resultsPath | Add-Content -LiteralPath $tmp -Encoding utf8
+      Move-Item -LiteralPath $tmp -Destination $resultsPath -Force
+      Write-Host "header añadido a results.csv"
+    } else {
+      Write-Host "header ya presente en results.csv"
+    }
+  }
+} catch { Write-Warning $_ }
