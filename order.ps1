@@ -1,81 +1,105 @@
 param(
-  [Parameter(Mandatory=$true, Position=0)]
-  [string]$Prompt,
+  [Parameter(Mandatory=$true, Position=0)][string]$Prompt,
   [switch]$Yes
 )
 
-function Write-NoBom($path, [string[]]$lines) {
+function Write-NoBom([string]$path, [string[]]$lines) {
   $enc = New-Object System.Text.UTF8Encoding($false)
-  $sw = [System.IO.StreamWriter]::new($path, $false, $enc)
-  foreach($l in $lines){ $sw.WriteLine($l) }
-  $sw.Close()
+  [IO.File]::WriteAllLines($path, $lines, $enc)
 }
 
-# 1) Detecta skill con el router
+# 1) Detectar skill con router
 $routerJson = python .\tools\router.py $Prompt
 try { $skill = (ConvertFrom-Json $routerJson).skill } catch { $skill = "web_titles_hard" }
 
-# 2) Mapea skill -> entry / default task_dir
-switch ($skill) {
-  'web_status_codes' { $entry='winners/web_status_codes/main.py'; $taskDir='tasks/web_status_codes/input' }
-  'web_h1_texts'    { $entry='winners/web_h1_texts/main.py';    $taskDir='tasks/web_h1_texts/input' }
-  'web_json_api'    { $entry='winners/web_json_api/main.py';    $taskDir='tasks/web_json_api/input' }
-  'web_meta'        { \C:\Users\Avalon\Desktop\vscode\Glados\winners\web_titles_hard\main.py='winners/web_meta/main.py';       \C:\Users\Avalon\Desktop\vscode\Glados\tasks\web_titles_hard\input='tasks/web_meta/input' }
-  'web_links'      { $entry='winners/web_links/main.py'; $taskDir='tasks/web_links/input' }
-  default           { $entry='winners/web_titles_hard/main.py'; $taskDir='tasks/web_titles_hard/input' }
+# 2) Resolver entry/task_dir/expected/net desde registry (fallback si falta)
+$entry   = ""
+$taskDir = ""
+$expected = ""
+$net = $false
+try {
+  $reg = Get-Content -Raw ".\examples\tools_registry.json" | ConvertFrom-Json
+  $s = $reg.skills | Where-Object { $_.id -eq $skill } | Select-Object -First 1
+  if ($s) { $entry=$s.entry; $taskDir=$s.task_dir; $expected=$s.expected; $net=[bool]$s.net }
+} catch {}
+
+if (-not $entry -or -not $taskDir) {
+  switch ($skill) {
+    'web_titles_hard' { $entry='winners/web_titles_hard/main.py'; $taskDir='tasks/web_titles_hard/input'; $net=$true }
+    'web_links'       { $entry='winners/web_links/main.py';       $taskDir='tasks/web_links/input';       $net=$true }
+    'web_meta'        { $entry='winners/web_meta/main.py';        $taskDir='tasks/web_meta/input';        $net=$true }
+    'web_h1_texts'    { $entry='winners/web_h1_texts/main.py';    $taskDir='tasks/web_h1_texts/input';    $net=$true }
+    'web_fetch_text'  { $entry='winners/web_fetch_text/main.py';  $taskDir='tasks/web_fetch_text/input';  $net=$true }
+    'web_fetch_text_clean' { $entry='winners/web_fetch_text_clean/main.py'; $taskDir='tasks/web_fetch_text/input'; $net=$true }
+    'forge_skill'     { $entry='winners/forge_skill/main.py';     $taskDir='workspace/forge/INPUT';       $net=$false }
+    'custom_quiero_una_nueva_skill_que_convie' { $entry='winners/custom_quiero_una_nueva_skill_que_convie/main.py'; $taskDir='tasks/custom_quiero_una_nueva_skill_que_convie/input'; $net=$false }
+    default           { $entry='winners/web_titles_hard/main.py'; $taskDir='tasks/web_titles_hard/input'; $net=$true }
+  }
 }
 
 # 3) Workdir por orden
 $ts = Get-Date -Format "yyyyMMdd_HHmmss"
 $workdir = "workspace/orders/$ts/$skill"
-New-Item -ItemType Directory -Force $workdir | Out-Null
+New-Item -ItemType Directory -Force $workdir     | Out-Null
+New-Item -ItemType Directory -Force (Join-Path $workdir 'logs') | Out-Null
 
-# 4) Extraer URLs del prompt y crear input efÃƒÂ­mero si aplica
-$needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts','web_meta','web_links')
+# 4) Inputs efÃ­meros segÃºn skill
+
+# 4.1) Skills con URLs -> crear urls.txt si hay URLs en el prompt
+$needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts','web_links','web_meta','web_fetch_text','web_fetch_text_clean')
 if ($needsUrls) {
   $matches = [regex]::Matches($Prompt, '(https?://[^\s,;]+)') | ForEach-Object { $_.Groups[1].Value.TrimEnd('.,)') }
   $urls = @($matches | Where-Object { $_ } | Select-Object -Unique)
   if ($urls.Count -gt 0) {
-    $epIn = Join-Path $workdir "input"
+    $epIn = Join-Path $workdir 'input'
     New-Item -ItemType Directory -Force $epIn | Out-Null
-    Write-NoBom (Join-Path $epIn "urls.txt") $urls
+    $urls | Set-Content -Encoding utf8 (Join-Path $epIn 'urls.txt')
     $taskDir = $epIn
   }
 }
 
-# 5) Ejecutar en docker via safe_runner
-$cmd = @(
-  "python", ".\tools\safe_runner.py",
-  "--entry", $entry,
-  "--task-dir", $taskDir,
-  "--allow-net",
-  "--timeout", "60",
-  "--cpus", "2",
-  "--mem-mb", "512",
-  "--workdir", $workdir
-)
-$proc = Start-Process -FilePath $cmd[0] -ArgumentList $cmd[1..($cmd.Length-1)] -NoNewWindow -PassThru -Wait
-$rc = $proc.ExitCode
+# 4.1.b) Si la skill es web_fetch_text_clean y el prompt contiene "a N" (chars/caracteres), crear limit.txt
+if ($skill -eq 'web_fetch_text_clean') {
+  $m = [regex]::Match($Prompt, '(?i)\ba\s+(\d{2,6})\s*(?:chars?|caracteres?)\b')
+  if ($m.Success -and $taskDir) {
+    $limitPath = Join-Path $taskDir 'limit.txt'
+    [IO.File]::WriteAllText($limitPath, $m.Groups[1].Value, (New-Object System.Text.UTF8Encoding($false)))
+  }
+}
 
-# 6) Mostrar resultado
+# 4.2) Tu skill html->texto: crear input/html.txt con el HTML del prompt
+if ($skill -eq 'custom_quiero_una_nueva_skill_que_convie') {
+  $epIn = Join-Path $workdir 'input'
+  New-Item -ItemType Directory -Force $epIn | Out-Null
+  $html = $Prompt
+  if ($Prompt -match ':\s*(.*)$') { $html = $Matches[1] }
+  [IO.File]::WriteAllText((Join-Path $epIn 'html.txt'), $html, (New-Object System.Text.UTF8Encoding($false)))
+  $taskDir = $epIn
+}
+
+# 5) Ejecutar
 $stdoutPath = Join-Path $workdir 'logs\stdout.txt'
 $stderrPath = Join-Path $workdir 'logs\stderr.txt'
-if ($rc -eq 0) {
-  Write-Host ("{0}" -f (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress))
-  if ($skill -eq 'web_links') {
-  Write-Host "
---- RESULTADO (web_links) ---"
-  Get-Content -Raw $stdoutPath | Write-Output
-  Write-Host "
 
-Logs:
-  stdout: $stdoutPath
-  stderr: $stderrPath"
-  return
-}Write-Host "`n--- RESULTADO ($skill) ---"
-  Get-Content -Raw $stdoutPath
-  Write-Host "`n`nLogs:`n  stdout: $(Resolve-Path $stdoutPath)`n  stderr: $(Resolve-Path $stderrPath)"
+if ($skill -eq 'forge_skill') {
+  # Ejecutar en host
+  New-Item -ItemType Directory -Force (Split-Path $stdoutPath) | Out-Null
+  & python $entry $taskDir 1> $stdoutPath 2> $stderrPath
+  $rc = $LASTEXITCODE
+  Write-Host ("{0}" -f (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress))
 } else {
-  Write-Output (@{ rc=$rc; stdout=$stdoutPath; stderr=$stderrPath } | ConvertTo-Json -Compress)
-  Write-Error "EjecuciÃƒÂ³n retornÃƒÂ³ cÃƒÂ³digo $rc"
+  # Ejecutar dentro de safe_runner (crea logs en $workdir\logs)
+  $args = @(".\tools\safe_runner.py","--entry",$entry,"--task-dir",$taskDir,"--timeout","60","--workdir",$workdir)
+  if ($net) { $args += "--allow-net" }
+  $json = & python @args
+  Write-Host $json
 }
+
+# 6) Mostrar resultado
+Write-Host ""
+Write-Host ("--- RESULTADO ({0}) ---" -f $skill)
+if (Test-Path $stdoutPath) { Get-Content -Raw $stdoutPath }
+Write-Host ""
+Write-Host "Logs:"
+Write-Host ("  stdout: {0}" -f $stdoutPath)
+Write-Host ("  stderr: {0}" -f $stderrPath)

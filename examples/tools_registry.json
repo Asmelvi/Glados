@@ -1,9 +1,9 @@
-﻿{
+{
     "skills":  [
                    {
                        "id":  "web_titles_hard",
                        "net":  true,
-                       "notes":  "Extrae tÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­tulos robustamente; maneja 404/503/302/SSL.",
+                       "notes":  "Extrae tÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­tulos robustamente; maneja 404/503/302/SSL.",
                        "task_dir":  "tasks/web_titles_hard/input",
                        "expected":  "tasks/web_titles_hard/expected_stdout.txt",
                        "entry":  "winners/web_titles_hard/main.py"
@@ -14,7 +14,7 @@
                        "task_dir":  "tasks/web_status_codes/input",
                        "expected":  "tasks/web_status_codes/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Devuelve el cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo HTTP (sin seguir redirecciones)."
+                       "notes":  "Devuelve el cÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³digo HTTP (sin seguir redirecciones)."
                    },
                    {
                        "id":  "web_h1_texts",
@@ -30,7 +30,7 @@
                        "task_dir":  "tasks/web_json_api/input",
                        "expected":  "tasks/web_json_api/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Lee endpoints JSON y extrae un tÃƒÂ­tulo (title o slideshow.title)."
+                       "notes":  "Lee endpoints JSON y extrae un tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulo (title o slideshow.title)."
                    },
                    {
                        "id":  "web_links",
@@ -38,7 +38,7 @@
                        "task_dir":  "tasks/web_links/input",
                        "expected":  "tasks/web_links/expected_stdout.txt",
                        "net":  true,
-                       "notes":  "Extrae enlaces (texto y href) de pÃ¡ginas."
+                       "notes":  "Extrae enlaces (texto y href) de pÃƒÆ’Ã‚Â¡ginas."
                    },
                    {
                        "id":  "web_meta",
@@ -46,7 +46,31 @@
                        "task_dir":  "tasks/web_meta/input",
                        "expected":  "",
                        "net":  true,
-                       "notes":  "Extrae meta/og/twitter y favicon de páginas."
+                       "notes":  "Extrae meta/og/twitter y favicon de pÃƒÂ¡ginas."
+                   },
+                   {
+                       "id":  "custom_quiero_una_nueva_skill_que_convie",
+                       "entry":  "winners/custom_quiero_una_nueva_skill_que_convie/main.py",
+                       "task_dir":  "tasks/custom_quiero_una_nueva_skill_que_convie/input",
+                       "expected":  "tasks/custom_quiero_una_nueva_skill_que_convie/expected_stdout.txt",
+                       "net":  false,
+                       "notes":  "Convierte HTML a texto plano desde input/html.txt y lo imprime en STDOUT (una lÃƒÂ­nea)."
+                   },
+                   {
+                       "id":  "web_fetch_text",
+                       "entry":  "winners/web_fetch_text/main.py",
+                       "task_dir":  "tasks/web_fetch_text/input",
+                       "expected":  "",
+                       "net":  true,
+                       "notes":  "Descarga HTML y devuelve texto plano por URL (CSV: url,texto)"
+                   },
+                   {
+                       "id":  "web_fetch_text_clean",
+                       "entry":  "winners/web_fetch_text_clean/main.py",
+                       "task_dir":  "tasks/web_fetch_text/input",
+                       "expected":  "",
+                       "net":  true,
+                       "notes":  "Descarga HTML y devuelve texto limpio recortado (CSV: url,texto)"
                    }
                ]
 }
