@@ -43,7 +43,7 @@ $workdir = "workspace/orders/$ts/$skill"
 New-Item -ItemType Directory -Force $workdir     | Out-Null
 New-Item -ItemType Directory -Force (Join-Path $workdir 'logs') | Out-Null
 
-# 4) Inputs efÃ­meros segÃºn skill
+# 4) Inputs efÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­meros segÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºn skill
 
 # 4.1) Skills con URLs -> crear urls.txt si hay URLs en el prompt
 $needsUrls = $skill -in @('web_status_codes','web_titles_hard','web_h1_texts','web_links','web_meta','web_fetch_text','web_fetch_text_clean')
@@ -103,3 +103,23 @@ Write-Host ""
 Write-Host "Logs:"
 Write-Host ("  stdout: {0}" -f $stdoutPath)
 Write-Host ("  stderr: {0}" -f $stderrPath)
+# 7) Guardar copia CSV bonita
+try {
+  \ = Join-Path \ 'results.csv'
+  if (Test-Path \) { Copy-Item \ \ -Force }
+} catch {}
+# 7b) Ensure results.csv (robusto y verboso)
+try {
+  if ($workdir -and $stdoutPath) {
+    $resultsPath = Join-Path $workdir 'results.csv'
+    New-Item -ItemType Directory -Force (Split-Path $resultsPath) | Out-Null
+    if (Test-Path $stdoutPath) {
+      Copy-Item $stdoutPath $resultsPath -Force
+      Write-Host ("results.csv: {0}" -f $resultsPath)
+    } else {
+      Write-Host ("(warn) stdout no encontrado: {0}" -f $stdoutPath)
+    }
+  } else {
+    Write-Host "(warn) workdir/stdoutPath no definidos cuando se intentó guardar results.csv"
+  }
+} catch { Write-Warning $_ }
